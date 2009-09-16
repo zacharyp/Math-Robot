@@ -23,20 +23,20 @@ public class Math_robotServlet extends AbstractRobotServlet {
     initialize();  
     
     if (events.wasSelfAdded()) {
-    Wavelet wavelet = events.getWavelet();
-    Blip blip = wavelet.appendBlip();
-    TextView textView = blip.getDocument();
-    textView.append("Math Robot is listening.\n");
-    textView.append("For help, respond with \"!mathr help\"");
-    return;
+      Wavelet wavelet = events.getWavelet();
+      Blip blip = wavelet.appendBlip();
+      TextView textView = blip.getDocument();
+      textView.append("Math Robot is listening.\n");
+      textView.append("For help, respond with \"!mathr help\"");
+      return;
     }
 
     List<Event> submittedEvents = events.getBlipSubmittedEvents();
     for (Event e : submittedEvents ) {
-    Blip blip = e.getBlip();
-    if (!blip.getCreator().equals("math-robot")) {
-      processMath(blip);
-    }
+      Blip blip = e.getBlip();
+      if (!blip.getCreator().equals("math-robot")) {
+        processMath(blip);
+      }
     }
   }
   
@@ -80,34 +80,34 @@ public class Math_robotServlet extends AbstractRobotServlet {
     return response.toString(); 
   }
   
-  private String isPrime(String num) {
+  private String isPrime(String input) {
     StringBuilder response = new StringBuilder();
     try {
-      Integer prime = Integer.parseInt(num);
+      Integer number = Integer.parseInt(input);
 
-      if (prime < 1)
+      if (number < 1)
         throw new NumberFormatException();
       
       boolean isprime = true;
-      Integer pSqrt = (new Double(Math.sqrt(prime))).intValue();
-      List<Integer> pList = Sieve.sieve_of_eratosthenes(pSqrt);
+      Integer pSqrt = (new Double(Math.sqrt(number))).intValue();
+      List<Integer> primes = Sieve.sieve_of_eratosthenes(pSqrt);
       
-      for (Integer i : pList) {
-        if (prime % i == 0) {
+      for (Integer p : primes) {
+        if (number % p == 0) {
           isprime = false;
           break; 
         }
       }
       
-      if (isprime || prime == 2) {
-        response.append(num + " is prime");
+      if (isprime || number == 2) {
+        response.append(input + " is prime");
       }
       else {
-        response.append(num + " is not prime");          
+        response.append(input + " is not prime");          
       }
     }
     catch (NumberFormatException e) {
-      response.append(num + " is not a positive integer between 1 and 2^31.");      
+      response.append(input + " is not a positive integer between 1 and 2^31.");      
     }
     return response.toString();
   }
