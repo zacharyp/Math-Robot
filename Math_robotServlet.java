@@ -118,18 +118,22 @@ public class Math_robotServlet extends AbstractRobotServlet {
     Integer n2 = null;
     try {
       n1 = Integer.parseInt(num1);
+      if (n1 < 1)
+        throw new NumberFormatException();
     }
     catch (NumberFormatException e) {
       response.append(num1 + " is not a positive integer between 1 and 2^31.");      
     }
     try {
       n2 = Integer.parseInt(num2);
+      if (n2 < 1)
+        throw new NumberFormatException();
     }
     catch (NumberFormatException e) {
       response.append(num2 + " is not a positive integer between 1 and 2^31.");      
     }
     
-    int n3 = 1;
+    int n3 = 0;
     
     if (n1 > n2)
       n3 = GCD(n1,n2);
