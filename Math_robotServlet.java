@@ -6,15 +6,16 @@ import com.google.wave.api.*;
 @SuppressWarnings("serial")
 public class Math_robotServlet extends AbstractRobotServlet {
 
-  private String HELPINFO;
+  private static String HELPINFO;
   
   private void initialize() {
     StringBuilder sb = new StringBuilder();
     sb.append("Math Robot help\n\n");
-    sb.append("List of commands, and all begin with !mathr [command]\n");
+    sb.append("List of commands, and all begin with !mr [command]\n");
     sb.append(" help - This help information\n");
     sb.append(" isprime [int]  - Check to see if an integer number is prime, up to 2^31\n");
-    sb.append(" gcd [int] [int] - Find the Greatest Common Divisor of two integers");
+    sb.append(" gcd [int] [int] - Find the Greatest Common Divisor of two integers\n");
+    sb.append(" calc [math] - Do basic integer calculator math (+ - * / &#37;)");
     HELPINFO = sb.toString();
   }
   
@@ -27,16 +28,13 @@ public class Math_robotServlet extends AbstractRobotServlet {
       Blip blip = wavelet.appendBlip();
       TextView textView = blip.getDocument();
       textView.append("Math Robot is listening.\n");
-      textView.append("For help, respond with \"!mathr help\"");
+      textView.append("For help, respond with \"!mr help\"");
       return;
     }
 
-    List<Event> submittedEvents = events.getBlipSubmittedEvents();
-    for (Event e : submittedEvents ) {
+    for (Event e : events.getBlipSubmittedEvents() ) {
       Blip blip = e.getBlip();
-      if (!blip.getCreator().equals("math-robot")) {
-        processMath(blip);
-      }
+      processMath(blip);
     }
   }
   
@@ -45,15 +43,16 @@ public class Math_robotServlet extends AbstractRobotServlet {
     String blipString = tV.getText();
     blipString = blipString.trim();
     
-    if (blipString.startsWith("!mathr")) {
-      blipResponse(tV, processMathRequest(blipString));
+    if (blipString.startsWith("!mr")) {
+      blipResponse(blip, processMathRequest(blipString));
     }
   }
   
-  private void blipResponse(TextView tv, String response) {
-    Blip responseBlip = tv.appendInlineBlip();
-    TextView newTV = responseBlip.getDocument();
-    newTV.append(response);
+  private void blipResponse(Blip b, String response) {
+    b.createChild().getDocument().append(
+      //String.format(response)
+      response
+    );
   }
   
   private String processMathRequest(String command) {
@@ -73,6 +72,14 @@ public class Math_robotServlet extends AbstractRobotServlet {
     }
     else if (tokens[1].equals("isprime") && tokens.length > 2) {
       response.append(isPrime(tokens[2]));
+    }
+    else if (tokens[1].equals("calc") && tokens.length > 2) {
+      String calc = "";
+      for (int i = 2; i < tokens.length; ++i){
+        calc += tokens[i];
+      }
+      Calculator calculator = new Calculator(calc);
+      response.append(calculator.calc());
     }
     else {
       response.append("Invalid command");
